@@ -2,6 +2,6 @@
 
 一部変更して作成
 
-project)  Maven → gradle
+project)  Maven → Gradle
 
 データベース)  H2 → MySQL
