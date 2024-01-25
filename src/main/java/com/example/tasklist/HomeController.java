@@ -29,7 +29,7 @@ public class HomeController {
   }
 
   //  キーのtaskListがtaskItemsをHTMLに渡すためのキー
-//  ${taskList}の部分がtaskItemsの中身であるListに置き換える
+  //  ${taskList}の部分がtaskItemsの中身であるListに置き換える
   @GetMapping("/list")
   String listItems(Model model) {
     List<TaskItem> taskItems = dao.findAll();
@@ -37,7 +37,7 @@ public class HomeController {
     return "home";
   }
 
-
+  //  タスクを追加するためのメソッド
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
       @RequestParam("deadline") String deadline) {
@@ -48,11 +48,30 @@ public class HomeController {
     return "redirect:/list";
   }
 
+  //  タスクを削除するためのメソッド
+  @GetMapping("/delete")
+  String deleteItem(@RequestParam("id") String id) {
+    dao.delete(id);
+    return "redirect:/list";
+  }
+
+  //  タスクを更新するためのメソッド
+  @GetMapping("/update")
+  String updateItem(@RequestParam("id") String id,
+      @RequestParam("task") String task,
+      @RequestParam("deadline") String deadline,
+      @RequestParam("done") boolean done) {
+    TaskItem taskItem = new TaskItem(id, task, deadline, done);
+    dao.update(taskItem);
+    return "redirect:/list";
+  }
+
   private TaskListDao dao;
 
   @Autowired
   HomeController(TaskListDao dao) {
     this.dao = dao;
   }
+
 
 }
