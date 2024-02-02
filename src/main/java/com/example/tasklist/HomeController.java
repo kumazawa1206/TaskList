@@ -41,11 +41,14 @@ public class HomeController {
   //  タスクを追加するためのメソッド
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
-      @RequestParam("deadline") String deadline) {
+      @RequestParam("deadline") String deadline, Model model) {
+    if (task.length() < 1 || task.length() > 20) {
+      model.addAttribute("error", "ERROR : :1〜20文字以内で入力してください");
+      return "home";
+    }
     String id = UUID.randomUUID().toString().substring(0, 8);
     TaskItem item = new TaskItem(id, task, deadline, false);
     dao.add(item);
-
     return "redirect:/list";
   }
 

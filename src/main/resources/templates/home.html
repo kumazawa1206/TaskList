@@ -10,6 +10,7 @@
 <h1>タスク管理アプリ</h1>
 <div class="task_form">
   <h2>タスクの登録</h2>
+  <div th:if="${error}" class="error" th:text="${error}"></div>
 
   <form action="/add">
     <label>タスク</label>

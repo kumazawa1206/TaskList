@@ -12,6 +12,11 @@ border: 1px solid;
 display: none;
 }
 
+.error {
+    color: red;
+}
+
+
 /* タスク入力フォーム */
 .task_form {
 padding: 0px 10px 10px 10px;
