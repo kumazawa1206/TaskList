@@ -24,6 +24,8 @@
 
 <div class="tasklist">
   <h2>現在のタスク一覧</h2>
+  <div th:if="${updateTaskError}" class="error" th:text="${updateTaskError}"></div>
+  <div th:if="${updateDeadlineError}" class="error" th:text="${updateDeadlineError}"></div>
   <table border="1">
     <thead>
     <tr>

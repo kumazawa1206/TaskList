@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class HomeController {
 
+  public static final String TASK_ERROR = "ERROR : 1〜20文字以内で入力してください";
+  public static final String DEADLINE_ERROR = "ERROR : 期限を設定してください";
+
   //  タスクを表すTaskItemレコードとそれを格納するtaskItemsフィールド
   record TaskItem(String id, String task, String deadline, boolean done) {
 
@@ -43,7 +46,17 @@ public class HomeController {
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
       @RequestParam("deadline") String deadline, Model model) {
-    String home = getError(task, deadline, model);
+    String home = "forward:/list";
+    if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
+      model.addAttribute("taskError", TASK_ERROR);
+      model.addAttribute("deadlineError", DEADLINE_ERROR);
+    } else if (task.length() < 1 || task.length() > 20) {
+      model.addAttribute("taskError", TASK_ERROR);
+    } else if (deadline == null || deadline.isEmpty()) {
+      model.addAttribute("deadlineError", DEADLINE_ERROR);
+    } else {
+      home = null;
+    }
     if (home != null) {
       return "forward:/list";
     }
@@ -68,9 +81,21 @@ public class HomeController {
       @RequestParam("deadline") String deadline,
       @RequestParam("done") boolean done,
       Model model) {
-    String home = getError(task, deadline, model);
+    String home = "home";
+    if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
+      model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
+      model.addAttribute("updateTaskError", TASK_ERROR);
+    } else if (task.length() < 1 || task.length() > 20) {
+      model.addAttribute("updateTaskError", TASK_ERROR);
+    } else if (deadline == null || deadline.isEmpty()) {
+      model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
+    } else {
+      home = null;
+    }
     if (home != null) {
-      return "forward:/list";
+      List<TaskItem> taskItems = dao.findAll();
+      model.addAttribute("taskList", taskItems);
+      return "home";
     }
     TaskItem taskItem = new TaskItem(id, task, deadline, done);
     dao.update(taskItem);
@@ -82,29 +107,6 @@ public class HomeController {
   @Autowired
   HomeController(TaskListDao dao) {
     this.dao = dao;
-  }
-
-  /**
-   * タスクが１〜２０文字以内ではない時 タスクが空または２１文字以上の時にエラーになる。 また、期日が設定されていない時にもエラーになる。
-   *
-   * @param task     タスク
-   * @param deadline 期日
-   * @param model    エラー文
-   * @return
-   */
-  private static String getError(String task, String deadline, Model model) {
-    if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
-      model.addAttribute("deadlineError", "ERROR : 期限を設定してください");
-      model.addAttribute("taskError", "ERROR : 1〜20文字以内で入力してください");
-      return "home";
-    } else if (task.length() < 1 || task.length() > 20) {
-      model.addAttribute("taskError", "ERROR : 1〜20文字以内で入力してください");
-      return "home";
-    } else if (deadline == null || deadline.isEmpty()) {
-      model.addAttribute("deadlineError", "ERROR : 期限を設定してください");
-      return "home";
-    }
-    return null;
   }
 
 }
