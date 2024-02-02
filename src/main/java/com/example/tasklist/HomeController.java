@@ -38,19 +38,21 @@ public class HomeController {
     return "home";
   }
 
-  //  タスクを追加するためのメソッド
+  //    タスクを追加するためのメソッド
+//    task及びdeadlineに何も記述がないとエラーが出る
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
       @RequestParam("deadline") String deadline, Model model) {
-    if (task.length() < 1 || task.length() > 20) {
-      model.addAttribute("error", "ERROR : :1〜20文字以内で入力してください");
-      return "home";
+    String home = getError(task, deadline, model);
+    if (home != null) {
+      return "forward:/list";
     }
     String id = UUID.randomUUID().toString().substring(0, 8);
     TaskItem item = new TaskItem(id, task, deadline, false);
     dao.add(item);
     return "redirect:/list";
   }
+
 
   //  タスクを削除するためのメソッド
   @GetMapping("/delete")
@@ -64,7 +66,12 @@ public class HomeController {
   String updateItem(@RequestParam("id") String id,
       @RequestParam("task") String task,
       @RequestParam("deadline") String deadline,
-      @RequestParam("done") boolean done) {
+      @RequestParam("done") boolean done,
+      Model model) {
+    String home = getError(task, deadline, model);
+    if (home != null) {
+      return "forward:/list";
+    }
     TaskItem taskItem = new TaskItem(id, task, deadline, done);
     dao.update(taskItem);
     return "redirect:/list";
@@ -77,5 +84,27 @@ public class HomeController {
     this.dao = dao;
   }
 
+  /**
+   * タスクが１〜２０文字以内ではない時 タスクが空または２１文字以上の時にエラーになる。 また、期日が設定されていない時にもエラーになる。
+   *
+   * @param task     タスク
+   * @param deadline 期日
+   * @param model    エラー文
+   * @return
+   */
+  private static String getError(String task, String deadline, Model model) {
+    if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
+      model.addAttribute("deadlineError", "ERROR : 期限を設定してください");
+      model.addAttribute("taskError", "ERROR : 1〜20文字以内で入力してください");
+      return "home";
+    } else if (task.length() < 1 || task.length() > 20) {
+      model.addAttribute("taskError", "ERROR : 1〜20文字以内で入力してください");
+      return "home";
+    } else if (deadline == null || deadline.isEmpty()) {
+      model.addAttribute("deadlineError", "ERROR : 期限を設定してください");
+      return "home";
+    }
+    return null;
+  }
 
 }

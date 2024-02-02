@@ -10,7 +10,8 @@
 <h1>タスク管理アプリ</h1>
 <div class="task_form">
   <h2>タスクの登録</h2>
-  <div th:if="${error}" class="error" th:text="${error}"></div>
+  <div th:if="${taskError}" class="error" th:text="${taskError}"></div>
+  <div th:if="${deadlineError}" class="error" th:text="${deadlineError}"></div>
 
   <form action="/add">
     <label>タスク</label>
@@ -72,8 +73,10 @@
       <input id="update_id" name="id" type="hidden"/>
       <label>タスク</label>
       <input id="update_task" name="task" type="text"/>
+
       <label>期限</label>
       <input id="update_deadline" name="deadline" type="date"/>
+
       <label>状態</label>
       <select id="update_status" name="done">
         <option value="false">未完了</option>
