@@ -1,0 +1,15 @@
+<!--トップページ用のHTML-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Hello Page</title>
+</head>
+<body>
+<h1>こんにちは</h1>
+<h2 th:text="${message}"></h2>
+<!--トップページからタスク管理ページに移動-->
+<p><a th:href="@{/list}">タスク管理ページへ</a></p>
+
+</body>
+</html>

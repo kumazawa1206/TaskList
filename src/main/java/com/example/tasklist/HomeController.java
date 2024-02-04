@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -29,6 +30,13 @@ public class HomeController {
   @Autowired
   HomeController(TaskListDao dao) {
     this.dao = dao;
+  }
+
+  // トップページ
+  @RequestMapping("/")
+  String hello(Model model) {
+    model.addAttribute("message", "計画的にタスク管理しましょう！！");
+    return "hello";
   }
 
 
