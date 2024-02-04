@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -32,14 +31,6 @@ public class HomeController {
     this.dao = dao;
   }
 
-  // トップページ
-  @RequestMapping("/")
-  String hello(Model model) {
-    model.addAttribute("message", "計画的にタスク管理しましょう！！");
-    return "hello";
-  }
-
-
   //  キーのtaskListがtaskItemsをHTMLに渡すためのキー
   //  ${taskList}の部分がtaskItemsの中身であるListに置き換える
   @GetMapping("/list")
@@ -54,18 +45,22 @@ public class HomeController {
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
       @RequestParam("deadline") String deadline, Model model) {
-    String home = "forward:/list";
+
+    // タスクが1~20字以内で記述がなく、期日の記述もない時にはエラーが出る。
     if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
       model.addAttribute("taskError", TASK_ERROR);
       model.addAttribute("deadlineError", DEADLINE_ERROR);
-    } else if (task.length() < 1 || task.length() > 20) {
-      model.addAttribute("taskError", TASK_ERROR);
-    } else if (deadline == null || deadline.isEmpty()) {
-      model.addAttribute("deadlineError", DEADLINE_ERROR);
-    } else {
-      home = null;
     }
-    if (home != null) {
+    // タスクにが1~20字以内で記述がないとエラーが出る。
+    if (task.length() < 1 || task.length() > 20) {
+      model.addAttribute("taskError", TASK_ERROR);
+    }
+    // 期日の記述がないとエラーが出る。
+    if (deadline == null || deadline.isEmpty()) {
+      model.addAttribute("deadlineError", DEADLINE_ERROR);
+    }
+    // エラーメッセージがある場合に/listページを表示する。
+    if (model.containsAttribute("taskError") || model.containsAttribute("deadlineError")) {
       return "forward:/list";
     }
     String id = UUID.randomUUID().toString().substring(0, 8);
@@ -92,6 +87,7 @@ public class HomeController {
       @RequestParam("done") boolean done,
       Model model) {
     String home = "home";
+    //タスクリストと期日が適切に入力されていなければエラーを出す。
     if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
       model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
       model.addAttribute("updateTaskError", TASK_ERROR);
@@ -100,8 +96,9 @@ public class HomeController {
     } else if (deadline == null || deadline.isEmpty()) {
       model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
     } else {
-      home = null;
+      home = null; // homeをnullに設定してリダイレクトの必要があるかどうかを示す。
     }
+    // homeがnullでない場合は、homeページに戻り、タスクリストを更新する。
     if (home != null) {
       List<TaskItem> taskItems = dao.findAll();
       model.addAttribute("taskList", taskItems);
@@ -111,6 +108,4 @@ public class HomeController {
     dao.update(taskItem);
     return "redirect:/list";
   }
-
-
 }
