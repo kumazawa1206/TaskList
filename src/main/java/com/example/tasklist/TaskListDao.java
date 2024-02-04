@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Service;
 
+// データベース操作用のクラス
 @Service
 public class TaskListDao {
 
@@ -21,18 +22,17 @@ public class TaskListDao {
     this.jdbcTemplate = jdbcTemplate;
   }
 
-  //引数に渡されたTaskItemオブジェクト情報を
-  //データベースのtasklistテーブルに登録する
+  //テーブルにタスク情報を追加するメソッド。
   public void add(TaskItem taskItem) {
     SqlParameterSource param = new BeanPropertySqlParameterSource(taskItem);
     SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate).withTableName("tasklist");
     insert.execute(param);
   }
 
-  //tasklistテーブルから現在登録されているタスク情報を
-  //全て取得してListオブジェクトに格納して返す
+  //テーブルのタスク情報を全て取得するメソッド。
+  //期日の古い順に表示される。
   public List<TaskItem> findAll() {
-    String query = "SELECT * FROM tasklist";
+    String query = "SELECT * FROM tasklist ORDER BY deadline";
 
     List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
     List<TaskItem> taskItems = result.stream()
@@ -46,13 +46,13 @@ public class TaskListDao {
     return taskItems;
   }
 
-  //tasklistテーブルから現在登録されているタスク情報を
-  //取得して削除するメソッド
+  //tasklistテーブルから現在登録されているタスク情報を取得して削除するメソッド
   public int delete(String id) {
     int number = jdbcTemplate.update("DELETE FROM tasklist WHERE id = ?", id);
     return number;
   }
 
+  //タスク情報を更新する
   public int update(TaskItem taskItem) {
     int number = jdbcTemplate.update(
         "UPDATE tasklist SET task = ? , deadline = ?, done = ? WHERE id = ?",
