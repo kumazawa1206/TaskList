@@ -1,7 +1,6 @@
 package com.example.tasklist;
 
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -26,11 +24,13 @@ public class HomeController {
 
   private List<TaskItem> taskItems = new ArrayList<>();
 
-  @RequestMapping(value = "/hello")
-  String hello(Model model) {
-    model.addAttribute("time", LocalDateTime.now());
-    return "hello";
+  private TaskListDao dao;
+
+  @Autowired
+  HomeController(TaskListDao dao) {
+    this.dao = dao;
   }
+
 
   //  キーのtaskListがtaskItemsをHTMLに渡すためのキー
   //  ${taskList}の部分がtaskItemsの中身であるListに置き換える
@@ -41,8 +41,8 @@ public class HomeController {
     return "home";
   }
 
-  //    タスクを追加するためのメソッド
-//    task及びdeadlineに何も記述がないとエラーが出る
+  // タスクを追加するためのメソッド
+  // task及びdeadlilneが空の場合または指定の文字数の場合、errorを返す。
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
       @RequestParam("deadline") String deadline, Model model) {
@@ -68,13 +68,15 @@ public class HomeController {
 
 
   //  タスクを削除するためのメソッド
+  // idを引数にする。
   @GetMapping("/delete")
   String deleteItem(@RequestParam("id") String id) {
     dao.delete(id);
     return "redirect:/list";
   }
 
-  //  タスクを更新するためのメソッド
+  // タスクを更新するためのメソッド
+  // task及びdeadlilneが空の場合または指定の文字数の場合、errorを返す。
   @PostMapping("/update")
   String updateItem(@RequestParam("id") String id,
       @RequestParam("task") String task,
@@ -102,11 +104,5 @@ public class HomeController {
     return "redirect:/list";
   }
 
-  private TaskListDao dao;
-
-  @Autowired
-  HomeController(TaskListDao dao) {
-    this.dao = dao;
-  }
 
 }
