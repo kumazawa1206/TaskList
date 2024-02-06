@@ -1,6 +1,7 @@
-package com.example.tasklist;
+package com.example.tasklist.Controller;
 
 
+import com.example.tasklist.TaskListDao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class HomeController {
   public static final String DEADLINE_ERROR = "ERROR : 期限を設定してください";
 
   //  タスクを表すTaskItemレコードとそれを格納するtaskItemsフィールド
-  record TaskItem(String id, String task, String deadline, boolean done) {
+  public record TaskItem(String id, String task, String deadline, boolean done) {
 
   }
 
@@ -37,7 +38,7 @@ public class HomeController {
   String listItems(Model model) {
     List<TaskItem> taskItems = dao.findAll();
     model.addAttribute("taskList", taskItems);
-    return "home";
+    return "post";
   }
 
   // タスクを追加するためのメソッド

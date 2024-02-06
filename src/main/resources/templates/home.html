@@ -8,20 +8,6 @@
 </head>
 
 <body>
-<h1>タスク管理アプリ</h1>
-<div class="task_form">
-  <h2>タスクの登録</h2>
-  <div th:if="${taskError}" class="error" th:text="${taskError}"></div>
-  <div th:if="${deadlineError}" class="error" th:text="${deadlineError}"></div>
-
-  <form action="/add">
-    <label>タスク</label>
-    <input name="task" type="text"/>
-    <label>期限</label>
-    <input name="deadline" type="date"/>
-    <input type="submit" value="登録"/>
-  </form>
-</div>
 
 <div class="tasklist">
   <h2>現在のタスク一覧</h2>
