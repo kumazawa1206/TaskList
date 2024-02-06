@@ -62,7 +62,7 @@ public class PostController {
     }
     // エラーメッセージがある場合に/listページを表示する。
     if (model.containsAttribute("taskError") || model.containsAttribute("deadlineError")) {
-      return "forward:/home";
+      return "forward:/post";
     }
     String id = UUID.randomUUID().toString().substring(0, 8);
     HomeController.TaskItem item = new HomeController.TaskItem(id, task, deadline, false);
