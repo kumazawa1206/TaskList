@@ -11,7 +11,7 @@ public class TopController {
   @RequestMapping("/")
   String hello(Model model) {
     model.addAttribute("message", "計画的にタスク管理しましょう！！");
-    return "hello";
+    return "top"; //top.htmlを返す。
   }
 
 }
