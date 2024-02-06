@@ -1,8 +1,14 @@
 /* 共通項目 */
-body {
+.header {
 margin: 50px;
 color: #283655;
 min-height: 1vh;
+
+}
+
+body {
+width: 95%;
+justify-content: space-between;
 }
 
 input {
@@ -28,6 +34,7 @@ header ul {
   list-style: none; /* リストのマーカーを表示しない */
   width: 100%; /* 画面の横幅いっぱいに広げる */
 }
+
 .task_form {
 padding: 10px;
 border: 1px solid #4D648D;

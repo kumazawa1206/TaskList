@@ -9,6 +9,13 @@
 
 <body>
 
+<header>
+  <ul>
+    <li><a th:href="@{/}">トップページへ</a></li>
+    <li><a th:href="@{/post}">タスク登録ページへ</a></li>
+  </ul>
+</header>
+
 <div class="tasklist">
   <h2>現在のタスク一覧</h2>
   <div th:if="${updateTaskError}" class="error" th:text="${updateTaskError}"></div>
@@ -27,7 +34,7 @@
     <tbody>
     <tr th:each="task :${taskList}">
       <td class="hidden" th:text="${task.id}"></td>
-      <td th:text="${task.task}"></td>
+      <td class="text" th:text="${task.task}"></td>
       <td width="100px" th:text="${task.deadline}"></td>
       <td width="50px" th:text="${task.done}?'完了' : '未完了'"></td>
       <td width="50px">
