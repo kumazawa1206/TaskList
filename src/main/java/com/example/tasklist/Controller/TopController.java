@@ -1,4 +1,4 @@
-package com.example.tasklist;
+package com.example.tasklist.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

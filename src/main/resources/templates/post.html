@@ -1,0 +1,34 @@
+<!--タスク投稿画面-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>タスク投稿画面</title>
+  <link th:href="@{/post.css}" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <ul>
+    <li><a th:href="@{/}">トップページへ</a></li>
+    <li>タスクリストへ</li>
+  </ul>
+</header>
+
+<h1>タスク管理アプリ</h1>
+<div class="task_form">
+  <h2>タスクの登録</h2>
+  <div th:if="${taskError}" class="error" th:text="${taskError}"></div>
+  <div th:if="${deadlineError}" class="error" th:text="${deadlineError}"></div>
+
+  <form action="/add">
+    <label>タスク</label>
+    <input name="task" type="text"/>
+    <label>期限</label>
+    <input name="deadline" type="date"/>
+    <input type="submit" value="登録"/>
+  </form>
+</div>
+
+</body>
+</html>

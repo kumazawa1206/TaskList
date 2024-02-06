@@ -16,22 +16,6 @@ display: none;
     color: red;
 }
 
-
-/* タスク入力フォーム */
-.task_form {
-padding: 0px 10px 10px 10px;
-border: 1px solid #4D648D;
-}
-
-.task_form form {
-display: grid;
-grid-template-columns: 100px 1fr;
-}
-
-.task_form input[type="date"],select {
-width: 150px;
-}
-
 /* タスク一覧 */
 .tasklist table {
 width: 100%;
