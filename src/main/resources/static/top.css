@@ -1,0 +1,20 @@
+body {
+color: #2d3133;
+  background-color: #dde411;
+  margin: 0;
+  text-align: center;
+  color: white;
+  min-height: 1vh;
+}
+
+h1 {
+  font-size: 50px;
+}
+
+h2 {
+  font-size: 50px;
+}
+
+p {
+  font-size: 20px;
+}
