@@ -1,7 +1,13 @@
 /* 共通項目 */
-body {
-margin: 30px;
+.header {
+margin: 50px;
 color: #283655;
+min-height: 1vh;
+}
+
+body {
+width: 95%;
+justify-content: space-between;
 }
 
 input {
@@ -23,14 +29,39 @@ border: 1px solid;
 border-collapse: collapse;
 }
 
+tr {
+    height: 50px;
+    text-align: center;
+}
+
+.text {
+  text-align: left;
+}
+
 /* タスク更新ダイアログ */
 #updateDialog {
 display: none;
 background-color: #FFFFFF;
 border: 2px double;
-width: 500px;
+width: 200px;
 position: fixed;
-top: 120px;
+top: 50px;
 z-index: 9999;
+left: 50%;
+padding: 20px;
+}
 
+#updateDialog label{
+display: block;
+}
+
+header ul {
+  background-color: #dde411; /* 背景色 */
+  padding: 5px 5px;
+  color: white;
+  min-height: 1vh;
+  display: flex;
+  justify-content: space-between; /* 要素の間を均等に配置 */
+  list-style: none; /* リストのマーカーを表示しない */
+  width: 100%; /* 画面の横幅いっぱいに広げる */
 }
