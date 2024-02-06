@@ -1,7 +1,7 @@
 # 標準的なタスク管理アプリに機能を追加したもの
-データベース：MySQL \n
-言語：Java\n
-フレームワーク：SpringBoot\n
+データベース：MySQL<br>
+言語：Java<br>
+フレームワーク：SpringBoot<br>
 
 ## 機能要件
 ・タスクを登録する\n
