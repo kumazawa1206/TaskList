@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 //　投稿を削除・更新するためのクラス
 
 @Controller
-public class HomeController {
+public class ListController {
 
   public static final String TASK_ERROR = "ERROR : 1〜20文字以内で入力してください";
   public static final String DEADLINE_ERROR = "ERROR : 期限を設定してください";
@@ -29,15 +29,15 @@ public class HomeController {
   private TaskListDao dao;
 
   @Autowired
-  HomeController(TaskListDao dao) {
+  ListController(TaskListDao dao) {
     this.dao = dao;
   }
 
-  @GetMapping("/home")
+  @GetMapping("/list")
   String listItems(Model model) {
-    List<HomeController.TaskItem> taskItems = dao.findAll();
+    List<ListController.TaskItem> taskItems = dao.findAll();
     model.addAttribute("taskList", taskItems);
-    return "home";
+    return "list";
   }
 
   //  タスクを削除するためのメソッド
@@ -45,7 +45,7 @@ public class HomeController {
   @GetMapping("/delete")
   String deleteItem(@RequestParam("id") String id) {
     dao.delete(id);
-    return "redirect:/home";
+    return "redirect:/list";
   }
 
   // タスクを更新するためのメソッド
@@ -56,7 +56,7 @@ public class HomeController {
       @RequestParam("deadline") String deadline,
       @RequestParam("done") boolean done,
       Model model) {
-    String home = "home";
+    String list = "list";
     //タスクリストと期日が適切に入力されていなければエラーを出す。
     if ((deadline == null || deadline.isEmpty()) && (task.length() < 1 || task.length() > 20)) {
       model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
@@ -66,16 +66,16 @@ public class HomeController {
     } else if (deadline == null || deadline.isEmpty()) {
       model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
     } else {
-      home = null; // homeをnullに設定してリダイレクトの必要があるかどうかを示す。
+      list = null; // homeをnullに設定してリダイレクトの必要があるかどうかを示す。
     }
     // homeがnullでない場合は、homeページに戻り、タスクリストを更新する。
-    if (home != null) {
+    if (list != null) {
       List<TaskItem> taskItems = dao.findAll();
       model.addAttribute("taskList", taskItems);
-      return "home";
+      return "list";
     }
     TaskItem taskItem = new TaskItem(id, task, deadline, done);
     dao.update(taskItem);
-    return "redirect:/home";
+    return "redirect:/list";
   }
 }

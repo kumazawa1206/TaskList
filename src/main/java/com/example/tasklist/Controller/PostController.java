@@ -23,7 +23,7 @@ public class PostController {
 
   }
 
-  private List<HomeController.TaskItem> taskItems = new ArrayList<>();
+  private List<ListController.TaskItem> taskItems = new ArrayList<>();
 
   private TaskListDao dao;
 
@@ -36,7 +36,7 @@ public class PostController {
 //    ${taskList}の部分がtaskItemsの中身であるListに置き換える
   @GetMapping("/post")
   String listItems(Model model) {
-    List<HomeController.TaskItem> taskItems = dao.findAll();
+    List<ListController.TaskItem> taskItems = dao.findAll();
     model.addAttribute("taskList", taskItems);
     return "post";
   }
@@ -65,9 +65,9 @@ public class PostController {
       return "forward:/post";
     }
     String id = UUID.randomUUID().toString().substring(0, 8);
-    HomeController.TaskItem item = new HomeController.TaskItem(id, task, deadline, false);
+    ListController.TaskItem item = new ListController.TaskItem(id, task, deadline, false);
     dao.add(item);
-    return "redirect:/home";
+    return "redirect:/list";
   }
 
 }
