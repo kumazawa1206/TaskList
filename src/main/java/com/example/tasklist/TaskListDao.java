@@ -1,6 +1,6 @@
 package com.example.tasklist;
 
-import com.example.tasklist.Controller.HomeController.TaskItem;
+import com.example.tasklist.Controller.ListController.TaskItem;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
