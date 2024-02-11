@@ -1,6 +1,8 @@
 package com.example.tasklist;
 
 import com.example.tasklist.Controller.ListController.TaskItem;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +38,24 @@ public class TaskListDao {
 
     List<Map<String, Object>> result = jdbcTemplate.queryForList(query);
     List<TaskItem> taskItems = result.stream()
-        .map((Map<String, Object> row) -> new TaskItem(
-            row.get("id").toString(),
-            row.get("task").toString(),
-            row.get("deadline").toString(),
-            (Boolean) row.get("done")))
-        .toList();
+        .map((Map<String, Object> row) -> {
+          LocalDate deadline = LocalDate.parse(row.get("deadline").toString());
+          boolean done = (Boolean) row.get("done");
+          if (!done && deadline.isEqual(LocalDate.now())) {
+            LocalDateTime now = LocalDateTime.now();
+            if (now.getHour() == 15 && deadline.isEqual(LocalDate.now())) {
+              done = true;
+              jdbcTemplate.update("UPDATE tasklist SET done = ? WHERE id = ?", done, row.get("id"));
+            }
+          }
+
+          return new TaskItem(
+              row.get("id").toString(),
+              row.get("task").toString(),
+              deadline,
+              done
+          );
+        }).toList();
 
     return taskItems;
   }
@@ -54,11 +68,19 @@ public class TaskListDao {
 
   //タスク情報を更新する
   public int update(TaskItem taskItem) {
+    LocalDateTime now = LocalDateTime.now();
+    LocalDate deadline = taskItem.deadline();
+    boolean done = taskItem.done();
+    if (!done && deadline.isEqual(LocalDate.now())) {
+      if (now.getHour() == 15) {
+        done = true;
+      }
+    }
     int number = jdbcTemplate.update(
         "UPDATE tasklist SET task = ? , deadline = ?, done = ? WHERE id = ?",
         taskItem.task(),
         taskItem.deadline(),
-        taskItem.done(),
+        done,
         taskItem.id());
     return number;
   }
