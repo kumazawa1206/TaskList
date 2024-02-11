@@ -2,6 +2,7 @@ package com.example.tasklist.Controller;
 
 import com.example.tasklist.TaskListDao;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,14 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class PostController {
 
+  //タスクの文字数に対するエラーメッセージ
   public static final String TASK_ERROR = "ERROR : 1〜20文字以内で入力してください";
+  //期限の設定に対するエラーメッセージ
   public static final String DEADLINE_ERROR = "ERROR : 期限を設定してください";
 
-  //  タスクを表すTaskItemレコードとそれを格納するtaskItemsフィールド
+  //タスク情報を保持するレコード
   public record TaskItem(String id, String task, LocalDate deadline, boolean done) {
 
   }
 
+  //タスク一覧を格納するリスト
   private List<ListController.TaskItem> taskItems = new ArrayList<>();
 
   private TaskListDao dao;
@@ -33,8 +37,7 @@ public class PostController {
     this.dao = dao;
   }
 
-  //    キーのtaskListがtaskItemsをHTMLに渡すためのキー
-//    ${taskList}の部分がtaskItemsの中身であるListに置き換える
+  //投稿ページを表示するメソッド
   @GetMapping("/post")
   String listItems(Model model) {
     List<ListController.TaskItem> taskItems = dao.findAll();
@@ -42,36 +45,45 @@ public class PostController {
     return "post";
   }
 
-  // タスクを追加するためのメソッド
-  // task及びdeadlilneが空の場合または指定の文字数の場合、errorを返す。
+  // タスクを追加するメソッド
   @GetMapping("/add")
   String addItem(@RequestParam("task") String task,
       @RequestParam("deadline") String deadlineString, Model model) {
 
-    LocalDate deadline = LocalDate.parse(deadlineString);
+    try {
+      LocalDate deadline = null;
+      if (!deadlineString.isEmpty()) {
+        deadline = LocalDate.parse(deadlineString);
+      }
 
-    // タスクが1~20字以内で記述がなく、期日の記述もない時にはエラーが出る。
-    if ((deadline == null || deadlineString.isEmpty()) && (task.length() < 1
-        || task.length() > 20)) {
-      model.addAttribute("taskError", TASK_ERROR);
-      model.addAttribute("deadlineError", DEADLINE_ERROR);
+      // 入力されたタスクや期限が適切でない場合はエラーメッセージを設定する
+      if (deadlineString.isEmpty() && (task.isEmpty() || task.length() > 20)) {
+        model.addAttribute("taskError", TASK_ERROR);
+        model.addAttribute("deadlineError", DEADLINE_ERROR);
+      }
+      // タスクにが1~20字以内で記述がないとエラーが出る。
+      if (task.isEmpty() || task.length() > 20) {
+        model.addAttribute("taskError", TASK_ERROR);
+      }
+      // 期日の記述がないとエラーが出る。
+      if (deadlineString.isEmpty()) {
+        model.addAttribute("deadlineError", DEADLINE_ERROR);
+      }
+      // エラーメッセージがある場合に/postページを表示する。
+      if (model.containsAttribute("taskError") || model.containsAttribute("deadlineError")) {
+        return "forward:/post";
+      }
+
+      //新しいタスクのを作成してリストに追加し、listページを返す。
+      String id = UUID.randomUUID().toString().substring(0, 8);
+      ListController.TaskItem item = new ListController.TaskItem(id, task, deadline, false);
+      dao.add(item);
+      return "redirect:/list";
+    } catch (DateTimeParseException e) {
+      //期限の形式が正しくない場合はエラーメッセージを設定してpostページにリダイレクトする
+      model.addAttribute("deadlineERROR", "ERROR : 期限の形式が正しくありません");
+      return "forward:/poat";
     }
-    // タスクにが1~20字以内で記述がないとエラーが出る。
-    if (task.length() < 1 || task.length() > 20) {
-      model.addAttribute("taskError", TASK_ERROR);
-    }
-    // 期日の記述がないとエラーが出る。
-    if (deadline == null || deadlineString.isEmpty()) {
-      model.addAttribute("deadlineError", DEADLINE_ERROR);
-    }
-    // エラーメッセージがある場合に/listページを表示する。
-    if (model.containsAttribute("taskError") || model.containsAttribute("deadlineError")) {
-      return "forward:/post";
-    }
-    String id = UUID.randomUUID().toString().substring(0, 8);
-    ListController.TaskItem item = new ListController.TaskItem(id, task, deadline, false);
-    dao.add(item);
-    return "redirect:/list";
   }
 
 }
