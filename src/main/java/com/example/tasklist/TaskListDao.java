@@ -43,7 +43,7 @@ public class TaskListDao {
           boolean done = (Boolean) row.get("done");
           if (!done && deadline.isEqual(LocalDate.now())) {
             LocalDateTime now = LocalDateTime.now();
-            if (now.getHour() == 15 && deadline.isEqual(LocalDate.now())) {
+            if (now.getHour() == 24 && deadline.isEqual(LocalDate.now())) {
               done = true;
               jdbcTemplate.update("UPDATE tasklist SET done = ? WHERE id = ?", done, row.get("id"));
             }
@@ -72,7 +72,7 @@ public class TaskListDao {
     LocalDate deadline = taskItem.deadline();
     boolean done = taskItem.done();
     if (!done && deadline.isEqual(LocalDate.now())) {
-      if (now.getHour() == 15) {
+      if (now.getHour() == 24) {
         done = true;
       }
     }
