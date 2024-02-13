@@ -28,9 +28,9 @@ public class ListController {
 
   }
 
-  private List<TaskItem> taskItems = new ArrayList<>();
+  private final List<TaskItem> taskItems = new ArrayList<>();
 
-  private TaskListDao dao;
+  private final TaskListDao dao;
 
   @Autowired
   ListController(TaskListDao dao) {
@@ -60,25 +60,15 @@ public class ListController {
       @RequestParam("done") boolean done,
       Model model) {
     String list = "list"; //リダイレクト先のページ
+
     try {
       LocalDate deadline = null;
       if (!deadlineString.isEmpty()) {
         deadline = LocalDate.parse(deadlineString);
       }
 
-      //タスクリストと期日が適切に入力されていない場合にエラーメッセージを表示する。
-      if (deadlineString.isEmpty() && (task.isEmpty() || task.length() > 20)) {
-        model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
-        model.addAttribute("updateTaskError", TASK_ERROR);
-      } else if (task.isEmpty() || task.length() > 20) {
-        model.addAttribute("updateTaskError", TASK_ERROR);
-      } else if (deadlineString.isEmpty()) {
-        model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
-      } else {
-        list = null; // リダイレクト先をnullに設定してリダイレクトの必要があるかどうかを示す。
-      }
+      list = setValidate(task, deadlineString, model, list);
 
-      // リダイレクト先がnullでない場合は、listページに戻り、更新を反映する。
       if (list != null) {
         List<TaskItem> taskItems = dao.findAll();
         model.addAttribute("taskList", taskItems);
@@ -94,5 +84,29 @@ public class ListController {
       model.addAttribute("deadlineERROR", "ERROR : 期限の形式が正しくありません");
       return "forward:/list";
     }
+  }
+
+
+  /**
+   * タスクと期日が適切に入力されていない場合にエラーメッセージを表示する。
+   *
+   * @param task           タスク
+   * @param deadlineString 期日
+   * @param model          エラーメッセージ
+   * @param list           listページ
+   * @return list.htmlを返す
+   */
+  private static String setValidate(String task, String deadlineString, Model model, String list) {
+    if (deadlineString.isEmpty() && (task.isEmpty() || task.length() > 20)) {
+      model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
+      model.addAttribute("updateTaskError", TASK_ERROR);
+    } else if (task.isEmpty() || task.length() > 20) {
+      model.addAttribute("updateTaskError", TASK_ERROR);
+    } else if (deadlineString.isEmpty()) {
+      model.addAttribute("updateDeadlineError", DEADLINE_ERROR);
+    } else {
+      list = null; // リダイレクト先をnullに設定してリダイレクトの必要があるかどうかを示す。
+    }
+    return list;// リダイレクト先がnullでない場合は、listページに戻り、更新を反映する。
   }
 }

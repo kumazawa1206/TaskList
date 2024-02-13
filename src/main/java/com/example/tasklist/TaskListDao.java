@@ -43,7 +43,7 @@ public class TaskListDao {
           boolean done = (Boolean) row.get("done");
           if (!done && deadline.isEqual(LocalDate.now())) {
             LocalDateTime now = LocalDateTime.now();
-            if (now.getHour() == 24 && deadline.isEqual(LocalDate.now())) {
+            if (now.getHour() == 23 && now.getMinute() == 59 && deadline.isEqual(LocalDate.now())) {
               done = true;
               jdbcTemplate.update("UPDATE tasklist SET done = ? WHERE id = ?", done, row.get("id"));
             }
@@ -62,8 +62,7 @@ public class TaskListDao {
 
   //tasklistテーブルから現在登録されているタスク情報を取得して削除するメソッド
   public int delete(String id) {
-    int number = jdbcTemplate.update("DELETE FROM tasklist WHERE id = ?", id);
-    return number;
+    return jdbcTemplate.update("DELETE FROM tasklist WHERE id = ?", id);
   }
 
   //タスク情報を更新する
@@ -72,16 +71,15 @@ public class TaskListDao {
     LocalDate deadline = taskItem.deadline();
     boolean done = taskItem.done();
     if (!done && deadline.isEqual(LocalDate.now())) {
-      if (now.getHour() == 24) {
+      if (now.getHour() == 23 && now.getMinute() == 59) {
         done = true;
       }
     }
-    int number = jdbcTemplate.update(
+    return jdbcTemplate.update(
         "UPDATE tasklist SET task = ? , deadline = ?, done = ? WHERE id = ?",
         taskItem.task(),
         taskItem.deadline(),
         done,
         taskItem.id());
-    return number;
   }
 }
